@@ -1,97 +1,312 @@
+/* ---------- design tokens ---------- */
+
+:root {
+  /* shared horizontal rail: both navbar and site layout use this padding-inline
+     so the sidebar's left edge and the logo line up */
+  --rail-inline: clamp(24px, 8vw, 120px);
+
+  /* shared columns for both navbar and siteLayout */
+  --sidebar-col: 260px;
+  --content-gap: 64px;
+
+  /* navbar height (used to size the scroll region below it) */
+  --navbar-h: 72px;
+
+  /* sketchbook palette */
+  --paper: #f4ecd8;        /* beige drawing paper */
+  --paper-page: #fbf6e8;   /* whiter inner page */
+  --paper-edge: #e2d6b5;   /* page shadow / edge */
+  --ink: #1f1a17;          /* pencil / body text */
+  --ink-muted: #6b625a;    /* captions */
+  --accent: #a4552b;       /* single accent for links, doodles */
+  --rule: #d9cdac;         /* hairline dividers */
+
+  /* subtle paper grain layered on top of --paper. Inline SVG so no asset
+     round-trip; low opacity keeps text legible. */
+  --paper-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12  0 0 0 0 0.10  0 0 0 0 0.06  0 0 0 0.07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ---------- base ---------- */
+
 * {
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
-  background: #faf9f5;
-  color: #171717;
-  font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
+  /* prevent the page itself from scrolling; sidebar + main scroll internally */
+  overflow: hidden;
+}
+
+body {
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: var(--paper-grain);
+  background-repeat: repeat;
+  font-family: var(--font-body), "Nunito", system-ui, -apple-system, Segoe UI,
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.hand {
+  font-family: var(--font-hand), "Caveat", "Bradley Hand", cursive;
 }
 
 /* ---------- navbar ---------- */
 
 .navbar {
-  height: 72px;
-  padding: 0 48px;
+  height: var(--navbar-h);
+  padding-inline: var(--rail-inline);
 
-  display: flex;
+  display: grid;
+  grid-template-columns: var(--sidebar-col) 1fr;
+  column-gap: var(--content-gap);
   align-items: center;
-  justify-content: space-between;
 
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--rule);
+  background-color: var(--paper);
+  background-image: var(--paper-grain);
+  position: relative;
+  z-index: 1;
 }
 
 .logo {
+  /* first column (aligned with sidebar rail). Small padding-left so the "J"
+     sits ~6px right of the sidebar's left edge. */
+  padding-left: 6px;
   color: inherit;
   text-decoration: none;
-  font-weight: 600;
+  font-family: var(--font-hand), "Caveat", cursive;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .navLinks {
+  /* second column: spread the 5 items evenly across the content area */
   display: flex;
-  gap: 32px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
 }
 
-.navLinks a,
-.sidebarLinks a {
+.navLinks a {
   color: inherit;
   text-decoration: none;
+  font-size: 15px;
+  padding: 4px 2px;
 }
 
-.navLinks a:hover,
-.sidebarLinks a:hover {
+.navLinks a:hover {
   text-decoration: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 6px;
 }
 
 .menuButton {
   display: none;
-
   background: none;
   border: none;
   font-size: 24px;
   cursor: pointer;
+  color: inherit;
 }
 
-/* ---------- page layout ---------- */
+/* ---------- site layout: sidebar + main, independent scroll ---------- */
 
 .siteLayout {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 64px 48px;
-
+  height: calc(100vh - var(--navbar-h));
+  padding-inline: var(--rail-inline);
   display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 80px;
+  grid-template-columns: var(--sidebar-col) 1fr;
+  column-gap: var(--content-gap);
+  overflow: hidden; /* children own their own scroll */
 }
 
-/* ---------- sidebar ---------- */
-
-.sidebar {
-  font-size: 14px;
-  line-height: 1.5;
+.sidebar,
+.mainContent {
+  height: 100%;
+  overflow-y: auto;
+  padding-block: 40px;
+  scrollbar-gutter: stable;
 }
-
-.sidebarLabel {
-  margin-top: 28px;
-  color: #777;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.sidebarLinks {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  margin-top: 28px;
-}
-
-/* ---------- content ---------- */
 
 .mainContent {
   min-width: 0;
+  padding-right: 8px; /* breathing room from scroll gutter */
+}
+
+/* ---------- sidebar profile card ---------- */
+
+.sidebar {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.avatarWrap {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--paper-page);
+  border: 1.5px solid var(--ink);
+  box-shadow: 2px 3px 0 var(--paper-edge);
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sidebarName {
+  margin: 16px 0 2px;
+  font-family: var(--font-hand), "Caveat", cursive;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.sidebarAffil {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.sidebarLocation {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.socialRow {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.socialRow a {
+  color: var(--ink);
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 6px;
+  transition: color 120ms ease, transform 120ms ease;
+}
+
+.socialRow a:hover {
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.socialRow svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.sidebarDivider {
+  margin: 24px 0 16px;
+  border: none;
+  border-top: 1px dashed var(--rule);
+}
+
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebarNav a {
+  display: inline-block;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 15px;
+  padding: 2px 0;
+}
+
+.sidebarNav a:hover {
+  text-decoration: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 4px;
+}
+
+.sidebarSummary {
+  margin-top: 20px;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+/* ---------- sketchbook page card ---------- */
+
+.sketchbook {
+  position: relative;
+  margin: 24px 0 40px;
+  padding: 36px 40px 40px 64px;
+  background: var(--paper-page);
+  background-image: var(--paper-grain);
+  border: 1px solid var(--paper-edge);
+  border-radius: 4px;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.04),
+    2px 6px 24px -8px rgba(0, 0, 0, 0.18),
+    0 20px 30px -24px rgba(0, 0, 0, 0.2);
+  transform: rotate(-0.4deg);
+  transform-origin: top left;
+}
+
+/* left-edge spiral binding — a repeating ring pattern */
+.sketchbook::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 14px;
+  width: 18px;
+  background-image: radial-gradient(
+    circle at 50% 8px,
+    var(--paper) 0 4px,
+    transparent 5px 100%
+  );
+  background-size: 18px 22px;
+  background-repeat: repeat-y;
+  border-left: 1px dashed var(--rule);
+  border-right: 1px dashed var(--rule);
+}
+
+.sketchbookTitle {
+  margin: 0 0 12px;
+  font-family: var(--font-hand), "Caveat", cursive;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.sketchbook p {
+  margin: 8px 0 0;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+/* ---------- doodle helper ---------- */
+
+.doodle {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
 }
 
 /* ---------- mobile ---------- */
@@ -100,11 +315,17 @@ body {
   display: none;
 }
 
-/* below 768px = mobile layout */
-
 @media (max-width: 768px) {
+  html,
+  body {
+    overflow: auto;
+    height: auto;
+  }
+
   .navbar {
-    padding: 0 24px;
+    padding-inline: 24px;
+    display: flex;
+    justify-content: space-between;
   }
 
   .navLinks {
@@ -115,23 +336,32 @@ body {
     display: block;
   }
 
-  .sidebar {
-    display: none;
-  }
-
   .siteLayout {
     display: block;
-    padding: 40px 24px;
+    height: auto;
+    padding-inline: 24px;
+    padding-block: 32px;
+    overflow: visible;
+  }
+
+  .sidebar,
+  .mainContent {
+    height: auto;
+    overflow: visible;
+    padding-block: 0;
+  }
+
+  .sidebar {
+    margin-bottom: 32px;
   }
 
   .mobileMenu {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-
-    padding: 24px;
-
-    border-bottom: 1px solid #ddd;
+    gap: 18px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper);
   }
 
   .mobileMenu a {

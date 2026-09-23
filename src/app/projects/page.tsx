@@ -2,9 +2,9 @@ export default function Page() {
     return (
         <section>
             <h1 className="hand" style={{ fontSize: 40, margin: "8px 0 12px" }}>
-                Sketchbook
+                Projects
             </h1>
-            <p>Coming soon — 3D sculptures, doodles, animations.</p>
+            <p>Coming soon.</p>
         </section>
     );
 }

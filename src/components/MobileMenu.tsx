@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NAV_ITEMS } from "@/lib/site";
 
 type MobileMenuProps = {
     closeMenu: () => void;
@@ -7,18 +8,11 @@ type MobileMenuProps = {
 export default function MobileMenu({ closeMenu }: MobileMenuProps) {
     return (
         <div className="mobileMenu">
-        <Link href="/work" onClick={closeMenu}>
-            Work
-        </Link>
-        <Link href="/sketchbook" onClick={closeMenu}>
-            Sketchbook
-        </Link>
-        <Link href="/misc" onClick={closeMenu}>
-            Misc
-        </Link>
-        <Link href="/about" onClick={closeMenu}>
-            About
-        </Link>
+            {NAV_ITEMS.map((item) => (
+                <Link key={item.href} href={item.href} onClick={closeMenu}>
+                    {item.label}
+                </Link>
+            ))}
         </div>
-  );
+    );
 }

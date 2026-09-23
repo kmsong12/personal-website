@@ -1,24 +1,62 @@
+import Image from "next/image";
+import Link from "next/link";
+
+import { NAV_ITEMS, SITE } from "@/lib/site";
+import { EmailIcon, GitHubIcon, LinkedInIcon } from "./SocialIcons";
+
 export default function Sidebar() {
     return (
         <aside className="sidebar">
-        <p className="sidebarLabel">Currently</p>
+            <div className="avatarWrap">
+                <Image
+                    className="avatar"
+                    src={SITE.avatar}
+                    alt={`${SITE.name} avatar`}
+                    width={112}
+                    height={112}
+                    priority
+                />
+            </div>
 
-        <p>
-            Robotics researcher interested in manipulation,
-            controls, and physical robotic systems.
-        </p>
+            <h2 className="sidebarName">{SITE.name}</h2>
+            <p className="sidebarAffil">{SITE.affiliation}</p>
+            <p className="sidebarLocation">{SITE.location}</p>
 
-        <p className="sidebarLabel">At</p>
+            <div className="socialRow">
+                <a
+                    href={SITE.socials.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="GitHub"
+                >
+                    <GitHubIcon />
+                </a>
+                <a
+                    href={SITE.socials.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="LinkedIn"
+                >
+                    <LinkedInIcon />
+                </a>
+                <a href={SITE.socials.email} aria-label="Email">
+                    <EmailIcon />
+                </a>
+            </div>
 
-        <p>Princeton University</p>
+            <hr className="sidebarDivider" />
 
-        <div className="sidebarLinks">
-            <a href="/resume.pdf">Resume</a>
-            <a href="https://github.com/YOUR_USERNAME">GitHub</a>
-            <a href="https://www.linkedin.com/in/YOUR_USERNAME">
-            LinkedIn
-            </a>
-        </div>
+            <ul className="sidebarNav">
+                {NAV_ITEMS.map((item) => (
+                    <li key={item.href}>
+                        <Link href={item.href}>{item.label}</Link>
+                    </li>
+                ))}
+            </ul>
+
+            <hr className="sidebarDivider" />
+
+            <p className="sidebarSummary">{SITE.summary}</p>
         </aside>
     );
 }
