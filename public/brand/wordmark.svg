@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" fill="none" stroke="#1d3557" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- slightly wonky rounded frame (hand-drawn feel) -->
+  <path d="M7 4 L37 5 Q40 5 40 8 L39 37 Q39 40 36 40 L7 39 Q4 39 4 36 L5 7 Q5 4 7 4 Z" />
+  <!-- J -->
+  <path d="M19 11 L19 25 Q19 30 14 30 Q10 30 9 27" />
+  <!-- S -->
+  <path d="M34 13 Q29 11 26 13 Q22 15 25 18 Q29 20 31 22 Q34 24 32 27 Q28 30 24 28" />
+</svg>
